@@ -56,27 +56,27 @@ session_start();
 // Add To Cart
 
 if(isset($_POST['addTo'])){
-    if(isset($_SESSION['idUser'])){
+    if(isset($_SESSION['id'])){
     
-        $addToPanier = $conn->prepare("INSERT INTO panier(id,idProduit, idUser, prixUnit, quantite, status, idCommande)
-                            VALUES(:idPanier,:idProduit,:idUser,:prixUnit,:quantite,:status,NULL)");
+        $addToPanier = $conn->prepare("INSERT INTO panier(id,idProduit, id, prixUnit, quantite, status, idCommande)
+                            VALUES(:idPanier,:idProduit,:id,:prixUnit,:quantite,:status,NULL)");
 
         $getPrix = $conn->prepare("SELECT prixAchat from produit where id=" .  $idProduit );
         $getPrix->execute();
         $getPrix = $getPrix->fetchObject();
         
-        $idUser = $_SESSION['idUser'];
+        $id = $_SESSION['id'];
         $prixUnit = $getPrix->prixAchat ;
         $quantite = $_POST['quantite'];
         $status = 'active';
         
         $date = date('dMYis');
-        $idPanier = $date . 'C' . $idUser . 'P' . $idProduit;
+        $idPanier = $date . 'C' . $id . 'P' . $idProduit;
 
 
         $addToPanier->bindParam(':idPanier',$idPanier);
         $addToPanier->bindParam(':idProduit',$idProduit);
-        $addToPanier->bindParam(':idUser',$idUser);
+        $addToPanier->bindParam(':id',$id);
         $addToPanier->bindParam(':prixUnit',$prixUnit);
         $addToPanier->bindParam(':quantite',$quantite);
         $addToPanier->bindParam(':status',$status);

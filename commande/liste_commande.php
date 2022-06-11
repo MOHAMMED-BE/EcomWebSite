@@ -5,7 +5,7 @@ session_start();
 if(empty($_SESSION)){
   header("location:pages-login.php");
 }else{
-  $id_user=$_SESSION['idUser'];
+  $id_user=$_SESSION['id'];
   $sql="select * from user where id=".$id_user;
   $res=$conn->query($sql);
   foreach($res as $row){
@@ -111,7 +111,7 @@ include "../aside.php"
                   $sql="select * from commande";
                   $resultat=$conn->query($sql);
 while($row=$resultat->fetch(PDO::FETCH_ASSOC)){
-  $sql1="select nom,prenom from user where id=".$row["idUser"]."";
+  $sql1="select nom,prenom from user where id=".$row["id"]."";
   $resultat1=$conn->query($sql1);
   while($row1=$resultat1->fetch(PDO::FETCH_ASSOC)){
   $nom_client=$row1["nom"]." ".$row1["prenom"];
@@ -122,7 +122,7 @@ while($row=$resultat->fetch(PDO::FETCH_ASSOC)){
   "</td><td>".$row["Total"].
   "</td><td>".$nom_client.
   "</td><td>".$row["statut"].
-  "</td><td>"."<a href=\"valid_cmd.php?id=".$row["id"]."&id_client=".$row["idUser"]."\" style=\"color: white !important;\">
+  "</td><td>"."<a href=\"valid_cmd.php?id=".$row["id"]."&id_client=".$row["id"]."\" style=\"color: white !important;\">
   <i class=\"ri-checkbox-circle-line\"></i><span>Valider</span></a>
   <a href=\"supprimer_cmd.php?id=".$row["id"]."\" style=\"color: white !important;\"><i class=\"ri-close-circle-fill\"></i><span>Supprimer</span></a>
   </td></tr>";

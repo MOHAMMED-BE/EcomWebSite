@@ -30,7 +30,7 @@
       <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
         <i class="bi bi-bell"></i>
         <span class="badge bg-primary badge-number"> <?php
-          $id=$_SESSION['idUser'];
+          $id=$_SESSION['id'];
           $sql1="select count(*) as coun from notification where id_client=$id and statut='unread'";
           $res1=$conn->query($sql1);
           foreach($res1 as $row){
@@ -43,7 +43,7 @@
       <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow notifications">
         <li class="dropdown-header">
           <?php
-          $id=$_SESSION['idUser'];
+          $id=$_SESSION['id'];
           $sql1="select count(*) as coun from notification where id_client=$id and statut='unread'";
           $res1=$conn->query($sql1);
           foreach($res1 as $row){
@@ -91,7 +91,7 @@ echo("<li class='notification-item'>
       <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
         <i class="bi bi-chat-left-text"></i>
         <span class="badge bg-success badge-number"><?php
-          $id=$_SESSION['idUser'];
+          $id=$_SESSION['id'];
           $sql1="select count(*) as coun from message where idClient=$id and statutMsg='unread'";
           $res1=$conn->query($sql1);
           foreach($res1 as $row){
@@ -103,7 +103,7 @@ echo("<li class='notification-item'>
       <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow messages">
         <li class="dropdown-header">
         <?php
-          $id=$_SESSION['idUser'];
+          $id=$_SESSION['id'];
           $sql1="select count(*) as coun from message where idClient=$id and statutMsg='unread'";
           $res1=$conn->query($sql1);
           foreach($res1 as $row){
@@ -119,7 +119,7 @@ echo("<li class='notification-item'>
         </li>
 
         <?php
-$id=$_SESSION['idUser'];
+$id=$_SESSION['id'];
 $sql="select * from message where idClient=$id and statutMsg='unread'";
 $res=$conn->query($sql);
 foreach($res as $row){
@@ -152,7 +152,7 @@ foreach($res as $row){
         <img src="../assets/img/profile-img.jpg" alt="Profile" class="rounded-circle">
         <?php
           if(!empty($_SESSION)){
-            $sql="select * from user where id=".$_SESSION['idUser'];
+            $sql="select * from user where id=".$_SESSION['id'];
             $res=$conn->query($sql);
             foreach($res as $row){
               echo('<span class="d-none d-md-block dropdown-toggle ps-2">'.$row['nom']." ".$row['prenom'].'</span>');
@@ -171,7 +171,7 @@ foreach($res as $row){
         <li class="dropdown-header">
           <?php
            if(!empty($_SESSION)){
-          $sql="select * from user where id=".$_SESSION['idUser'];
+          $sql="select * from user where id=".$_SESSION['id'];
           $res=$conn->query($sql);
           foreach($res as $row){
             echo("<h6>".$row['nom']." ".$row['prenom']."</h6><span>".$row['role']."</span>");
@@ -206,16 +206,16 @@ foreach($res as $row){
         <li>
           <hr class="dropdown-divider">
         </li>
-        <form method="POST">
+       
         <li>
           <a class="dropdown-item d-flex align-items-center" href="">
             <i class="bi bi-box-arrow-right"></i>
-           
+            <form method="POST" action="deconnecter.php">
             <button type="submit" name="decnn" style="border: none;background: white;">Deconnecter</button>
-           
+            </form>
           </a>
         </li>
-        </form>
+   
 
       </ul><!-- End Profile Dropdown Items -->
     </li><!-- End Profile Nav -->

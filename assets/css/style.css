@@ -1070,3 +1070,10 @@ h1, h2, h3, h4, h5, h6 {
   font-size: 13px;
   color: #012970;
 }
+.img_liste_prod{
+  width: 54px;
+}
+.img_liste_prod:hover{
+  transform: scale(2.7);
+  transition: width 2s, height 2s, transform 2s;
+}

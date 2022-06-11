@@ -66,15 +66,15 @@ if(isset($_POST['logout'])){
                 <a class='nav-link active'  href='contactUs/contactUs.php'  target='_blank'>Contact US</a>
                 </li>
             </ul>
-            <form class='d-flex' method='POST'>
+            <form class='d-flex' method='POST' style="margin-right: 61px;">
 
             <?php
 
 
-            if(isset($_SESSION['idUser'])){
-                $idUser = $_SESSION['idUser'];
-                $select = $conn->prepare("SELECT count(*) from panier where idUser = :idUser and status='active'");
-                $select->bindParam(':idUser',$idUser);
+            if(isset($_SESSION['id'])){
+                $id = $_SESSION['id'];
+                $select = $conn->prepare("SELECT count(*) from panier where id = :id and status='active'");
+                $select->bindParam(':id',$id);
                 $select->execute();
                 $count = $select->fetchColumn();
 
@@ -93,21 +93,83 @@ if(isset($_POST['logout'])){
 
       ?>
 
-            <button name='register' class='btn btn-outline-dark mx-3'  type='submit'>Sign UP</button>
+
                 
                 <?php
                 // session_start();
-                    if(!isset($_SESSION['idUser'])){
+                    if(!isset($_SESSION['id'])){
+                        echo "<button name='register' class='btn btn-outline-dark mx-3'  type='submit'>Sign UP</button>";
                         echo "<button name='login' class='btn btn-outline-dark mx-3'  type='submit'>Sign IN</button>";
                     }
                     else{
-                        echo "<button name='logout' class='btn btn-outline-dark mx-3'  type='submit'>Log Out</button>";
+                        // echo "<button name='logout' class='btn btn-outline-dark mx-3'  type='submit'>Log Out</button>";
+                        
+                    ?>
+
+<ul class="d-flex align-items-center" style="list-style:none">
+
+<li class="nav-item dropdown pe-3">
+
+  <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
+  
+    <?php
+        $sql="select * from user where id=".$_SESSION['id'];
+        $res=$conn->query($sql);
+        foreach($res as $row){
+          echo('<span class="d-none d-md-block dropdown-toggle ps-2">'.$row['nom']." ".$row['prenom'].'</span>');
+        }
+
+      ?>
+
+  </a>
+
+  <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
+    <li class="dropdown-header">
+      <?php
+
+      $sql="select * from user where id=".$_SESSION['id'];
+      $res=$conn->query($sql);
+      foreach($res as $row){
+        echo("<h6>".$row['nom']." ".$row['prenom']."</h6><span style='margin: auto 70px;'>".$row['role']."</span>");
+
+      }
+  
+
+
+      ?>
+     
+     
+    </li>
+    <li>
+      <hr class="dropdown-divider">
+    </li>
+
+    <li>
+      <a class="dropdown-item d-flex align-items-center" href="dashboard.php">
+        <i class="bi bi-person"></i>
+        <span>My Dashboard</span>
+      </a>
+    </li>
+
+    <form method="POST" action="deconnecter.php">
+    <li>
+      <a class="dropdown-item d-flex align-items-center" href="">
+        <i class="bi bi-box-arrow-right"></i>
+       
+        <button type="submit" name="decnn" style="border: none;background: white;">Deconnecter</button>
+       
+      </a>
+    </li>
+    </form>
+
+  </ul><!-- End Profile Dropdown Items -->
+</li><!-- End Profile Nav -->
+
+</ul>
+<?php
                     }
+?>
 
-
-    
-                  
-                ?>
             </form>
             </div>
         </div>

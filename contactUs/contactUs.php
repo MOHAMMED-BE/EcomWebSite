@@ -77,14 +77,14 @@ include("../connexion.php");
 <?php
 
 
-if(isset($_SESSION['idUser'])){
+if(isset($_SESSION['id'])){
 
     if(isset($_POST['Send'])){
         $subjectMsg = $_POST['subject'];
         $textMesg = $_POST['message'];
         $dateMsg = date('Y/m/d');
         $statutMsg = "unread";
-        $idClient = $_SESSION['idUser'];
+        $idClient = $_SESSION['id'];
 
         $insert = $conn->prepare("INSERT into message(subjectMsg,textMsg,dateMsg,statutMsg,idClient) values(:subjectMsg,:textMsg,:dateMsg,:statutMsg,:idClient)");
        
