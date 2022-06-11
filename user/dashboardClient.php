@@ -148,8 +148,8 @@ include "../header.php"
                     </thead>
                     <tbody>
                       <?php
-                      $id=$_SESSION['idUser'];
-                      $sql="select * from commande where idUser=$id order by date desc";
+                      $id=$_SESSION['id'];
+                      $sql="select * from commande where id=$id order by date desc";
                       $res=$conn->query($sql);
                       $col_style="style='background-color: #ffc107 !important;'";
                       foreach($res as $row){

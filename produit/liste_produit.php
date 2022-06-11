@@ -5,7 +5,7 @@ session_start();
 if(empty($_SESSION)){
   header("location:pages-login.php");
 }else{
-  $id_user=$_SESSION['idUser'];
+  $id_user=$_SESSION['id'];
   $sql="select * from user where id=".$id_user;
   $res=$conn->query($sql);
   foreach($res as $row){
@@ -113,15 +113,15 @@ while($row=$resultat->fetch(PDO::FETCH_ASSOC)){
   $nom_cat=$row1["Name"];
   }
   echo "<tr><td>".$row["id"].
-  "</td><td><img style='width: 54px;' src='images/".$row["image"].
+  "</td><td><img class='img_liste_prod' src='images/".$row["image"].
   "'/></td><td>".$row["libelle"].
   "</td><td>".$row["marque"].
   "</td><td>".$nom_cat.
-  "</td><td>".$row["description"].
+  "</td><td>".substr($row["description"],0,60)."...".
   "</td><td>".$row["prixAchat"].
-  "</td><td>".$row["prixVente"].
-  "</td><td>".$row["quantite"].
-  "</td><td>"."<a href=\"supprimer_prod.php?id=".$row["id"]."\" style=\"color: white !important;\"><i class=\"ri-close-circle-fill\"></i><span>Supprimer</span></a></td></tr>";
+  " DH</td><td>".$row["prixVente"].
+  " DH</td><td>".$row["quantite"].
+  " Unit</td><td>"."<a href=\"supprimer_prod.php?id=".$row["id"]."\" style=\"color: white !important;\"><i class=\"ri-close-circle-fill\"></i><span>Supprimer</span></a></td></tr>";
 }
                   ?>
                 </tbody>

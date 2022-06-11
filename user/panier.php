@@ -358,8 +358,8 @@ include "asideClient.php"
 
 
   <?php
-      $req=$conn->prepare("select pan.id,pro.libelle,pro.description,pro.prixVente,pro.image,pan.quantite from panier pan,produit pro where pan.idProduit=pro.id and idUser=:idUser2 and status='active'");
-      $req->bindParam("idUser2",$_SESSION['idUser']);
+      $req=$conn->prepare("select pan.id,pro.libelle,pro.description,pro.prixVente,pro.image,pan.quantite from panier pan,produit pro where pan.idProduit=pro.id and id=:idUser2 and status='active'");
+      $req->bindParam("idUser2",$_SESSION['id']);
       $req->execute();
       $total_de_total=0;  
       foreach($req as $row){
@@ -403,11 +403,11 @@ include "asideClient.php"
     </form>
     <?php
     if(isset($_POST['valide'])){
-      $req=$conn->prepare("insert into commande(Total,idUser,statut) values (:total,:idUser,'En cours de traitment')");
+      $req=$conn->prepare("insert into commande(Total,id,statut) values (:total,:id,'En cours de traitment')");
       $req->execute(array(
         'total' => $mytotal,
-        'idUser' => $_SESSION['idUser']));
-      $conn->exec("update panier set status='disable' where idUser=".$_SESSION['idUser']);
+        'id' => $_SESSION['id']));
+      $conn->exec("update panier set status='disable' where id=".$_SESSION['id']);
   
      
     }

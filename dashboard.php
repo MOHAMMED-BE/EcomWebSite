@@ -7,7 +7,7 @@ include("connexion.php");
 if(empty($_SESSION)){
   header("location:pages-login.php");
 }else{
-  $id_user=$_SESSION['idUser'];
+  $id_user=$_SESSION['id'];
   $sql="select * from user where id=".$id_user;
   $res=$conn->query($sql);
   foreach($res as $row){
@@ -26,7 +26,7 @@ if(isset($_POST['btn_lu2'])){
   $req2->execute();
 }
 
-$select = $conn->prepare("SELECT count(*) from commande where statut='traiter' ");
+$select = $conn->prepare("SELECT count(*) from commande c where statut='traiter' and datediff(curdate(),c.date)<=31 ");
 $select->execute();
 $count=$select->fetchColumn();
 
@@ -34,9 +34,11 @@ $select1 = $conn->prepare("SELECT count(*) from user where role='Client'");
 $select1->execute();
 $count_client=$select1->fetchColumn();
 
-$select2 = $conn->prepare("SELECT sum(Total) from commande ");
+$select2 = $conn->prepare("SELECT sum(Total) from commande c where statut='traiter' and datediff(curdate(),c.date)<=31");
 $select2->execute();
 $count_revenu=$select2->fetchColumn();
+
+
 
 
 ?>
@@ -107,7 +109,7 @@ $count_revenu=$select2->fetchColumn();
       <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
         <i class="bi bi-chat-left-text"></i>
         <span class="badge bg-success badge-number"><?php
-          $id=$_SESSION['idUser'];
+          $id=$_SESSION['id'];
           $sql1="select count(*) as coun from message where idClient=$id and statutMsg='unread'";
           $res1=$conn->query($sql1);
           foreach($res1 as $row){
@@ -119,7 +121,7 @@ $count_revenu=$select2->fetchColumn();
       <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow messages">
         <li class="dropdown-header">
         <?php
-          $id=$_SESSION['idUser'];
+          $id=$_SESSION['id'];
           $sql1="select count(*) as coun from message where idClient=$id and statutMsg='unread'";
           $res1=$conn->query($sql1);
           foreach($res1 as $row){
@@ -135,7 +137,7 @@ $count_revenu=$select2->fetchColumn();
         </li>
 
         <?php
-$id=$_SESSION['idUser'];
+$id=$_SESSION['id'];
 $sql="select * from message where idClient=$id and statutMsg='unread'";
 $res=$conn->query($sql);
 foreach($res as $row){
@@ -167,10 +169,10 @@ foreach($res as $row){
     <li class="nav-item dropdown pe-3">
 
       <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
-        <img src="../assets/img/profile-img.jpg" alt="Profile" class="rounded-circle">
+        <img src="\EcomWebSite\assets\img\profile-img.jpg" alt="Profile" class="rounded-circle">
         <?php
           if(!empty($_SESSION)){
-            $sql="select * from user where id=".$_SESSION['idUser'];
+            $sql="select * from user where id=".$_SESSION['id'];
             $res=$conn->query($sql);
             foreach($res as $row){
               echo('<span class="d-none d-md-block dropdown-toggle ps-2">'.$row['nom']." ".$row['prenom'].'</span>');
@@ -189,7 +191,7 @@ foreach($res as $row){
         <li class="dropdown-header">
           <?php
            if(!empty($_SESSION)){
-          $sql="select * from user where id=".$_SESSION['idUser'];
+          $sql="select * from user where id=".$_SESSION['id'];
           $res=$conn->query($sql);
           foreach($res as $row){
             echo("<h6>".$row['nom']." ".$row['prenom']."</h6><span>".$row['role']."</span>");
@@ -224,13 +226,12 @@ foreach($res as $row){
         <li>
           <hr class="dropdown-divider">
         </li>
-        <form method="POST">
+        <form method="POST" action="deconnecter.php">
         <li>
           <a class="dropdown-item d-flex align-items-center" href="">
             <i class="bi bi-box-arrow-right"></i>
            
-            <button type="submit" name="decnn" style="    border: none;
-    background: white;">Deconnecter</button>
+            <button type="submit" name="decnn" style="    border: none;background: white;">Deconnecter</button>
            
           </a>
         </li>
@@ -339,12 +340,13 @@ foreach($res as $row){
         <div class="col-lg-12">
           <div class="row">
 
-            <!-- Sales Card -->
+            <!--Calcule des commande -->
+
             <div class="col-xxl-4 col-md-6">
               <div class="card info-card sales-card">
 
                 <div class="card-body">
-                  <h5 class="card-title">Commande</h5>
+                  <h5 class="card-title">Commande de cette mois</h5>
 
                   <div class="d-flex align-items-center">
                     <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
@@ -352,23 +354,68 @@ foreach($res as $row){
                     </div>
                     <div class="ps-3">
                       <h6><?php echo $count?></h6>
-                      <span class="text-success small pt-1 fw-bold">12%</span> <span class="text-muted small pt-2 ps-1">increase</span>
-
+                      <span class="<?=$txt_style?> small pt-1 fw-bold"><?php if(isset($txt_revenu)){$txt_revenu;}?></span>
                     </div>
                   </div>
                 </div>
 
               </div>
-            </div><!-- End Sales Card -->
+            </div>
+            <!-- Fin Calcule des commande -->
 
             <!-- Revenue Card -->
             <div class="col-xxl-4 col-md-6">
               <div class="card info-card revenue-card">
+<!--Calcule des revenu -->
+<?php
+$sql1="select SUM(Total) as total from commande c where datediff(curdate(),c.date)<=31 and statut='traiter';";
+$sql2="select SUM(Total) as total from commande c where datediff(curdate(),c.date)>31 and datediff(curdate(),c.date)<62 and statut='traiter';";
+$res_sql1=$conn->query($sql1);
+$res_sql2=$conn->query($sql2);
+$row1=$res_sql1->fetch();
+$row2=$res_sql2->fetch();
 
+if($row1==null && $row2==null){
+
+
+}else{
+  $this_month=floatval($row1["total"]);
+  $month_befor=floatval($row2["total"]);
+
+  //function qui calcule les increase et les decrease
+
+
+  if($this_month>0 && $month_befor>0){
+    //echo $this_month. $month_befor;
+    if(($this_month-$month_befor)>0){
+     $Increase=$this_month-$month_befor;
+     $Increase= $Increase/$month_befor*100;
+     $txt_revenu="an increase of ".number_format((float)$Increase,2, '.', '')."%";
+     $txt_style="text-success";
+    }
+    else if(($this_month-$month_befor)<0){
+   $Decrease=$month_befor-$this_month;
+   $Decrease=$Decrease/$month_befor*100;
+   $txt_revenu="an Decrease of ".number_format((float)$Decrease,2, '.', '')."%";
+   $txt_style="text-danger";
+    }else{
+   
+    }
+  }else{
+    $txt_revenu="";
+  }
+
+
+ 
+}
+?>
+
+
+<!-- Fin Calcule des revenu -->
             
 
                 <div class="card-body">
-                  <h5 class="card-title">Revenue </h5>
+                  <h5 class="card-title">Revenue de cette mois </h5>
 
                   <div class="d-flex align-items-center">
                     <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
@@ -376,7 +423,7 @@ foreach($res as $row){
                     </div>
                     <div class="ps-3">
                       <h6><?php echo $count_revenu?> DH</h6>
-                      <span class="text-success small pt-1 fw-bold">8%</span> <span class="text-muted small pt-2 ps-1">increase</span>
+                      <span class="<?=$txt_style?> small pt-1 fw-bold"><?php echo $txt_revenu ?></span>
 
                     </div>
                   </div>
@@ -399,7 +446,6 @@ foreach($res as $row){
                     </div>
                     <div class="ps-3">
                       <h6><?php echo $count_client?></h6>
-                      <span class="text-danger small pt-1 fw-bold">12%</span> <span class="text-muted small pt-2 ps-1">decrease</span>
 
                     </div>
                   </div>
@@ -428,7 +474,7 @@ foreach($res as $row){
                     </thead>
                     <tbody>
 <?php
-$req="select c.id,c.date,c.Total,cl.nom,cl.prenom,c.statut from commande c,user cl where c.idUser=cl.id order by c.date limit 5 ";
+$req="select c.id,c.date,c.Total,cl.nom,cl.prenom,c.statut from commande c,user cl where c.id=cl.id order by c.date limit 5 ";
 $res=$conn->query($req);
 $col_style="style='background-color: #ffc107 !important;'";
 foreach($res as $row){
@@ -490,7 +536,7 @@ echo(">".$row['statut']."</span></td></tr>");
                        p.id=pan.idProduit and pan.status='disable' GROUP by pan.idProduit ORDER by count(pan.idProduit) LIMIT 10";
                       $res=$conn->query($sql);
                       foreach($res as $row){
-                        echo('<th scope="row"><a href="#"><img src="Produit/images/'.$row["image"].'"></a></th>'.
+                        echo('<th scope="row"><a href="#"><img class="img_liste_prod" src="Produit/images/'.$row["image"].'"></a></th>'.
                         '</td><td>'.$row['libelle'].
                         '</td><td>'.$row['qantiteVendu'].
                         '</td><td>'.$row['prixVente'].

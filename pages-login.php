@@ -4,7 +4,7 @@
 if(isset($_POST['email']) && isset($_POST['password'])){
  
   $user=$_POST['email'];
-  $pass=$_POST['password'];
+  $pass=md5($_POST['password']);
   
   $selectUser= $conn->prepare("SELECT * from user where email=:user and password=:pass");
   $selectUser->bindParam("user",$user);
@@ -14,7 +14,7 @@ if(isset($_POST['email']) && isset($_POST['password'])){
   
   if($selectUser->rowCount()>0){
     $user = $selectUser->fetchObject();
-    $_SESSION['idUser'] = $user->id;
+    $_SESSION['id'] = $user->id;
 
     header("Location: dashboard.php" );  
 

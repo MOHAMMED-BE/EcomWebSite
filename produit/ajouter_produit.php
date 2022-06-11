@@ -5,7 +5,7 @@ session_start();
 if(empty($_SESSION)){
   header("location:pages-login.php");
 }else{
-  $id_user=$_SESSION['idUser'];
+  $id_user=$_SESSION['id'];
   $sql="select * from user where id=".$id_user;
   $res=$conn->query($sql);
   foreach($res as $row){

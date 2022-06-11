@@ -7,21 +7,20 @@ if(empty($_SESSION)){
 }
 //fin de test
 if(isset($_POST['btn_change'])){
-  $old_pass=$_POST['currentPassword'];
-  $new_pass1=$_POST['newPassword'];
-  $new_pass2=$_POST['renewPassword'];
+  $old_pass=md5($_POST['currentPassword']);
+  $new_pass1=md5($_POST['newPassword']);
+  $new_pass2=md5($_POST['renewPassword']);
   if($new_pass1!=$new_pass2){
     echo '<div class="alert alert-danger alert-dismissible fade show  fixed-top top-0 text-center" role="alert">
     Veuillez vous entrer deux mot de pas identique !
     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>';
   }else{
-    $sql="select password from user where id=".$_SESSION['idUser'];
+    $sql="select password from user where id=".$_SESSION['id'];
     $res=$conn->query($sql);
     $row=$res->fetch();
-    
     if($old_pass==$row['password']){
-      $req=$conn->prepare("update user set password='$new_pass1' where id=".$_SESSION['idUser']);
+      $req=$conn->prepare("update user set password='$new_pass1' where id=".$_SESSION['id']);
       $req->execute();
       echo '<div class="alert alert-success alert-dismissible fade show  fixed-top top-0 text-center" role="alert">
       le mot de pass est changer !
@@ -84,7 +83,7 @@ include "../header.php";
 if(empty($_SESSION)){
   header("location:pages-login.php");
 }else{
-  $id_user=$_SESSION['idUser'];
+  $id_user=$_SESSION['id'];
   $sql="select * from user where id=".$id_user;
   $res=$conn->query($sql);
   foreach($res as $row){
